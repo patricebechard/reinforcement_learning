@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 NUM_PROBLEMS = 2000
-NUM_ARMS = 25
+NUM_ARMS = 10
 NUM_STEPS = 1000
 
-EPSILONS = [0., 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+# EPSILONS = [0., 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0]
+EPSILONS = [0.1, 0.01, 0.]
 STABILITY_EPS = 1e-8
 
 def explore_or_exploit(n_items, EPSILON):
@@ -19,6 +20,10 @@ def main():
 
     # creating the q_*(a) for all a and all problems at the same time
     optimal_values = np.random.randn(NUM_PROBLEMS, NUM_ARMS)
+    optimal_action = np.argmax(optimal_values, axis=-1)
+
+    fig, (ax1, ax2) = plt.subplots(2, 1)
+    plt.figure(1)
 
     for EPSILON in EPSILONS:
 
@@ -31,6 +36,7 @@ def main():
 
         # average reward_per_time_step
         avg_reward_tracker = []
+        optimal_action_pct_tracker = []
 
         for i in tqdm(range(NUM_STEPS)):
 
@@ -54,12 +60,19 @@ def main():
 
             avg_reward_tracker.append(np.mean(rewards))
 
-        plt.plot(np.arange(len(avg_reward_tracker)), avg_reward_tracker, label=f"eps={EPSILON}")
+            optimal_action_pct_tracker.append(np.sum(actions == optimal_action) / NUM_PROBLEMS)
 
-    plt.xlabel("Steps")
-    plt.ylabel("Average Reward")
-    plt.legend()
-    plt.savefig("avg_reward.png")
+        # plot avg reward
+        ax1.plot(np.arange(len(avg_reward_tracker)), avg_reward_tracker, label=f"eps={EPSILON}")
+
+        # plot % optimal action
+        ax2.plot(np.arange(len(optimal_action_pct_tracker)), optimal_action_pct_tracker, label=f"eps={EPSILON}")
+
+    ax1.set_ylabel("Average Reward")
+    ax2.set_ylabel("% Optimal Action")
+    ax2.set_xlabel("Steps")
+
+    plt.savefig("results.png")
 
 
 

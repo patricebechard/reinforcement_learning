@@ -69,4 +69,10 @@ This focusses on exploitation and not exploration. Simple approach to also do ex
 	Answer : 0.75 (half of the time, we select the greedy, the other half, we select one action at random, so 50\% of these times (25\% of all times), we select the greedy also)
 \end{quote}
 
+\section{The 10-armed Testbed}
+
+In this section, they test 2000 randomly generated k-armed bandit problems with $k=10$. For each problem, they choose $q_*(a)$ using normal distribution with mean 0 and variance 1. Then, actual reward was sampled from a gaussian of variance 1 and mean sampled earlier.
+
+See code I wrote to solve the problem. Results are the same as in the book.
+
 \end{document}
