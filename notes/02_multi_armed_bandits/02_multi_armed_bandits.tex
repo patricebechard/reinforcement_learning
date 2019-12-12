@@ -1,0 +1,72 @@
+\documentclass{article}
+
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{bbm}
+\usepackage[margin=1in]{geometry}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+\begin{document}
+\title{Chapter 2 : Multi-Armed Bandits}
+\maketitle
+
+
+\begin{quote}
+	The most important feature distinguishing reinforcement learning from other types of learning is that it uses training information that \textit{evaluates} the actions taken rather than \textit{instructs} by giving correct actions.
+\end{quote}
+
+\begin{itemize}
+	\item Evaluative feedback indicates how good the action taken was, but not which action is better (depends entirely on the action)
+	\item Instructive feedback indicates which action to take, independently of the taken action. (intependent of the action taken)
+\end{itemize}
+
+This chapter : \textbf{RL where we learn to act in only one situation} (nonassociative setting). Towards the end of the chapter, we tackle the associative problem (which action to take in more than one situation)
+
+\section{A k-armed Bandit Problem}
+
+\begin{itemize}
+	\item One choice among $k$ different options (or actions)
+	\item After each choice, we receive a numerical reward chosen from a stationary probability distribution depending on the action selected.
+	\item Goal is to maximize the expected total reward over some time period (\textit{time steps})
+\end{itemize}
+
+In this problem, each of the $k$ actions have an expected or mean reward (the \textit{value} of the action). Action selected at time $t$ is $A(t)$, and corresponding reward is $R(t)$. Then, the expected reward $q_*(a)$ is given by :
+
+\begin{equation}
+q_*(a) \doteq \mathbb{E}\left[ R_t | A_t = a \right]
+\end{equation}
+
+This is a trivial problem if we know the value of each action. We assume we don't know them, but we may have estimates ($Q_t(a)$). We would like  $Q_t(a)$ to be close to $q_*(a)$.
+
+If we maintain the estimates at each time step, we have one action with largest estimated reward, which we call the \textit{greedy action}. When selecting them, we are \textbf{exploiting} the current knowledge. If we select another one, we are \textbf{exploring} the system.
+
+Ways to balance between exploration and exploitation might be complicated. Here, we focus only on simple approaches.
+
+\section{Action-value Methods}
+
+Ways to evaluate values of actions. One natural way to etimate it is average of rewards actually received :
+
+\begin{equation}
+Q_t(a) \doteq \frac{\text{sum of rewards when } a \text{ taken prior to } t}{\text{number of times } a \text { taken prior to } t} = \frac{\sum_{i=1}^{t-1} R_i \cdot \mathbbm{1}_{A_i=a}}{\sum_{i=1}^{t-1} \mathbbm{1}_{A_i = a}}
+\end{equation}
+
+Note that if the denominator is 0, then we define a default value. As the denominator goes to infinity, the LLN says that $Q_t(a)$ converges to $q_*(a)$. This is called the \textbf{sample-average method}. (Maybe not the best method, but simple enough for now).
+
+Simplest action selection rule is to select one of the highest estimated values (greedy).
+
+\begin{equation}
+A_t \doteq \argmax_a Q_t(a)
+\end{equation}
+
+This focusses on exploitation and not exploration. Simple approach to also do exploration would be to sample greedily most of the time, but sometimes (e.g. with probability $\epsilon$) select an action at random (called $\epsilon$\textit{-greedy} methods)
+
+\begin{quote}
+	In $\epsilon$\textit{-greedy} action selection, for the case of two actions and $\epsilon=0.5$, what is the probability that the greedy action is selected?
+	
+	Answer : 0.75 (half of the time, we select the greedy, the other half, we select one action at random, so 50\% of these times (25\% of all times), we select the greedy also)
+\end{quote}
+
+\end{document}
